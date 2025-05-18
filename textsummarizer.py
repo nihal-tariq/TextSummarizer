@@ -1,12 +1,22 @@
 import nltk
+import os
 
-# Download NLTK resources if not already present
-nltk.download("punkt")
-nltk.download("stopwords")
-nltk.download("wordnet")
-nltk.download("omw-1.4")
+# Set up NLTK download path
+NLTK_DATA_PATH = "/tmp/nltk_data"
+os.makedirs(NLTK_DATA_PATH, exist_ok=True)
+nltk.data.path.append(NLTK_DATA_PATH)
 
-print(nltk.sent_tokenize("Hello there. This is a test."))
+def safe_download(resource_name):
+    try:
+        nltk.data.find(resource_name)
+    except LookupError:
+        nltk.download(resource_name, download_dir=NLTK_DATA_PATH)
+
+# Explicitly download required resources
+safe_download("punkt")
+safe_download("stopwords")
+safe_download("wordnet")
+safe_download("omw-1.4")
 
 
 # --- MAIN IMPORTS ---
