@@ -1,7 +1,6 @@
 import os
 os.environ["TORCH_USE_RTLD_GLOBAL"] = "YES"
 
-
 import streamlit as st
 import nltk
 import PyPDF2
@@ -10,6 +9,15 @@ import re
 from io import StringIO
 from rake_nltk import Rake
 import torch
+
+
+nltk.data.path.append("/tmp/nltk_data")
+
+
+nltk.download('punkt', download_dir="/tmp/nltk_data")
+nltk.download('stopwords', download_dir="/tmp/nltk_data")
+nltk.download('wordnet', download_dir="/tmp/nltk_data")
+nltk.download('omw-1.4', download_dir="/tmp/nltk_data")
 
 try:
     nltk.data.find('corpora/stopwords')
