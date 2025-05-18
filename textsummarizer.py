@@ -1,21 +1,35 @@
-import os
-os.environ["TORCH_USE_RTLD_GLOBAL"] = "YES"
-
-# --- NLTK SETUP FOR STREAMLIT CLOUD ---
 import nltk
+import os
 
-# Ensure temporary nltk data path is set
-nltk_data_dir = "/tmp/nltk_data"
-os.makedirs(nltk_data_dir, exist_ok=True)
-nltk.data.path.append(nltk_data_dir)
+# Set up NLTK download path
+NLTK_DATA_PATH = "/tmp/nltk_data"
+nltk.data.path.append(NLTK_DATA_PATH)
+
+# Download only if not already present
+try:
+    nltk.data.find("tokenizers/punkt")
+except LookupError:
+    nltk.download("punkt", download_dir=NLTK_DATA_PATH)
+
+try:
+    nltk.data.find("corpora/stopwords")
+except LookupError:
+    nltk.download("stopwords", download_dir=NLTK_DATA_PATH)
+
+try:
+    nltk.data.find("corpora/wordnet")
+except LookupError:
+    nltk.download("wordnet", download_dir=NLTK_DATA_PATH)
+
+try:
+    nltk.data.find("corpora/omw-1.4")
+except LookupError:
+    nltk.download("omw-1.4", download_dir=NLTK_DATA_PATH)
 
 
-required = ["punkt", "stopwords", "wordnet", "omw-1.4"]
-for res in required:
-    try:
-        nltk.data.find(f"tokenizers/{res}" if res == "punkt" else f"corpora/{res}")
-    except LookupError:
-        nltk.download(res, download_dir=nltk_data_dir)
+print(nltk.sent_tokenize("Hello there. This is a test."))
+
+
 
 # --- MAIN IMPORTS ---
 import streamlit as st
