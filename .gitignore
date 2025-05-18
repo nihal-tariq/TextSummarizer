@@ -1,0 +1,29 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Jupyter/IPython
+.ipynb_checkpoints
+
+# Environment
+.env
+.venv/
+venv/
+ENV/
+env.bak/
+env/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs and outputs
+*.log
+
+# Streamlit
+.streamlit/config.toml
+
+# Model & tokenizer cache (optional, handled by huggingface cache)
+~/.cache/
