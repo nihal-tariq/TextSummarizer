@@ -6,17 +6,19 @@ import re
 from io import StringIO
 from rake_nltk import Rake
 import torch
+
 try:
     nltk.data.find('corpora/stopwords')
     nltk.data.find('tokenizers/punkt')
 except LookupError:
-    st.warning("Downloading NLTK resources (first-time setup)...")
+    st.warning("Downloading language resources (first-time setup)...")
     with st.spinner("This may take a minute..."):
         nltk.download('stopwords', quiet=True)
         nltk.download('punkt', quiet=True)
         nltk.download('wordnet', quiet=True)
         nltk.download('omw-1.4', quiet=True)
     st.rerun()
+
 
 
 try:
