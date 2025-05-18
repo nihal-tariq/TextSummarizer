@@ -1,34 +1,12 @@
 import nltk
-import os
 
-# Set up NLTK download path
-NLTK_DATA_PATH = "/tmp/nltk_data"
-nltk.data.path.append(NLTK_DATA_PATH)
-
-# Download only if not already present
-try:
-    nltk.data.find("tokenizers/punkt")
-except LookupError:
-    nltk.download("punkt", download_dir=NLTK_DATA_PATH)
-
-try:
-    nltk.data.find("corpora/stopwords")
-except LookupError:
-    nltk.download("stopwords", download_dir=NLTK_DATA_PATH)
-
-try:
-    nltk.data.find("corpora/wordnet")
-except LookupError:
-    nltk.download("wordnet", download_dir=NLTK_DATA_PATH)
-
-try:
-    nltk.data.find("corpora/omw-1.4")
-except LookupError:
-    nltk.download("omw-1.4", download_dir=NLTK_DATA_PATH)
-
+# Download NLTK resources if not already present
+nltk.download("punkt")
+nltk.download("stopwords")
+nltk.download("wordnet")
+nltk.download("omw-1.4")
 
 print(nltk.sent_tokenize("Hello there. This is a test."))
-
 
 
 # --- MAIN IMPORTS ---
