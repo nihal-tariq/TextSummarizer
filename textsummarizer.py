@@ -3,14 +3,17 @@ import os
 
 # Set up NLTK download path
 NLTK_DATA_PATH = "/tmp/nltk_data"
-os.makedirs(NLTK_DATA_PATH, exist_ok=True)
 nltk.data.path.append(NLTK_DATA_PATH)
 
-def safe_download(resource_name):
+# Download required NLTK resources
+resources = ["punkt", "punkt_tab", "stopwords", "wordnet", "omw-1.4"]
+
+for resource in resources:
     try:
-        nltk.data.find(resource_name)
+        nltk.data.find(resource)
     except LookupError:
-        nltk.download(resource_name, download_dir=NLTK_DATA_PATH)
+        nltk.download(resource, download_dir=NLTK_DATA_PATH)
+
 
 # Explicitly download required resources
 safe_download("punkt")
