@@ -1,8 +1,24 @@
 import os
 os.environ["TORCH_USE_RTLD_GLOBAL"] = "YES"
 
-import streamlit as st
+# --- NLTK SETUP FOR STREAMLIT CLOUD ---
 import nltk
+
+# Ensure temporary nltk data path is set
+nltk_data_dir = "/tmp/nltk_data"
+os.makedirs(nltk_data_dir, exist_ok=True)
+nltk.data.path.append(nltk_data_dir)
+
+
+required = ["punkt", "stopwords", "wordnet", "omw-1.4"]
+for res in required:
+    try:
+        nltk.data.find(f"tokenizers/{res}" if res == "punkt" else f"corpora/{res}")
+    except LookupError:
+        nltk.download(res, download_dir=nltk_data_dir)
+
+# --- MAIN IMPORTS ---
+import streamlit as st
 import PyPDF2
 import docx
 import re
@@ -10,35 +26,11 @@ from io import StringIO
 from rake_nltk import Rake
 import torch
 
-
-nltk.data.path.append("/tmp/nltk_data")
-
-
-nltk.download('punkt', download_dir="/tmp/nltk_data")
-nltk.download('stopwords', download_dir="/tmp/nltk_data")
-nltk.download('wordnet', download_dir="/tmp/nltk_data")
-nltk.download('omw-1.4', download_dir="/tmp/nltk_data")
-
-try:
-    nltk.data.find('corpora/stopwords')
-    nltk.data.find('tokenizers/punkt')
-except LookupError:
-    st.warning("Downloading language resources (first-time setup)...")
-    with st.spinner("This may take a minute..."):
-        nltk.download('stopwords', quiet=True)
-        nltk.download('punkt', quiet=True)
-        nltk.download('wordnet', quiet=True)
-        nltk.download('omw-1.4', quiet=True)
-    st.rerun()
-
-
-
 try:
     from transformers import T5ForConditionalGeneration, T5Tokenizer
 except ImportError as e:
     st.error(f"Missing dependencies! {str(e)}\n\nPlease install: pip install sentencepiece torch")
     st.stop()
-
 
 @st.cache_resource(show_spinner=False)
 def load_model():
@@ -52,8 +44,7 @@ def load_model():
 
 model, tokenizer = load_model()
 
-# Text extraction
-
+# --- FILE TEXT EXTRACTION ---
 def extract_text(file):
     try:
         if file.name.endswith(".pdf"):
@@ -68,7 +59,7 @@ def extract_text(file):
         st.error(f"File processing error: {str(e)}")
     return ""
 
-# Safer chunking using nltk.sent_tokenize
+# --- CHUNKING TEXT FOR SUMMARIZATION ---
 def split_into_sections(text, max_chars=500):
     sentences = nltk.sent_tokenize(text)
     chunks = []
@@ -83,23 +74,21 @@ def split_into_sections(text, max_chars=500):
         chunks.append(current.strip())
     return chunks
 
-
+# --- FLASHCARD HEADING USING RAKE ---
 def get_flashcard_heading(text):
     try:
         r = Rake(min_length=1, max_length=3)
         r.extract_keywords_from_text(text)
         keywords = r.get_ranked_phrases()
-
         if not keywords:
             sentences = nltk.sent_tokenize(text)
             return sentences[0][:70].strip() if sentences else "🔖 Untitled Section"
-
         best_keyword = keywords[0].replace('"', '').strip()
         return best_keyword[:70] or "🔖 Untitled Section"
     except Exception:
         return "🔖 Untitled Section"
 
-# UI starts here
+# --- STREAMLIT UI ---
 st.title("🧠 Flashcard Generator: Your new Study Partner")
 option = st.radio("Choose input method:", ["📤 Upload a file", "✍️ Paste text"])
 
@@ -115,6 +104,7 @@ if option == "📤 Upload a file":
 elif option == "✍️ Paste text":
     text = st.text_area("Paste your long text here", height=200)
 
+# Preprocessing
 if text:
     text = re.sub(r'http\S+', '', text)
     text = re.sub(r'<[^>]+>', '', text)
@@ -122,6 +112,7 @@ if text:
     text = re.sub(r'\s+', ' ', text).strip()
     text = text.encode('ascii', 'ignore').decode()
 
+# GENERATE FLASHCARDS
 if st.button("📇 Generate Flashcards") and text.strip():
     st.subheader("🗂 Flashcards")
     sections = split_into_sections(text)
