@@ -1,9 +1,10 @@
 import nltk
 import os
 
-# Set up NLTK download path
+
 NLTK_DATA_PATH = "/tmp/nltk_data"
 nltk.data.path.append(NLTK_DATA_PATH)
+
 
 def safe_download(resource_name):
     try:
@@ -11,10 +12,11 @@ def safe_download(resource_name):
     except LookupError:
         nltk.download(resource_name, download_dir=NLTK_DATA_PATH)
 
-safe_download("punkt")       
-safe_download("stopwords")   
-safe_download("wordnet")     
-safe_download("omw-1.4")    
+
+safe_download("punkt")
+safe_download("stopwords")
+safe_download("wordnet")
+safe_download("omw-1.4")
 
 
 
