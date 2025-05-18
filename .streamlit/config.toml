@@ -1,2 +1,4 @@
 [server]
 enableWatchdog = false
+[server]
+fileWatcherType = "none"
