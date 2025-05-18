@@ -1,3 +1,7 @@
+import os
+os.environ["TORCH_USE_RTLD_GLOBAL"] = "YES"
+
+
 import streamlit as st
 import nltk
 import PyPDF2
