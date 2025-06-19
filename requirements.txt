@@ -6,3 +6,4 @@ rake-nltk==1.0.6
 PyPDF2>=3.0.1
 python-docx>=0.8.11
 sentencepiece>=0.1.99
+reportlab>=3.6.12
